@@ -31,11 +31,6 @@ next_date = str(next_date)
 today = datetime.date.today()
 today = str(today)
 
-sql_insert = '''
-	INSERT INTO `{}` (`DATE`, `OPEN`, `HIGH`, `CLOSE`, `LOW`, `VOLUME`, `TURNOVER`)
-	VALUES (%s, %s, %s, %s, %s, %s, %s);
-	'''
-
 for each in symbols:
 	symbol_df = tushare_mysql.getHistKlineDf(symbol=each,
 									  beginDate=next_date,
@@ -43,8 +38,8 @@ for each in symbols:
 									  retry_count=5)
 
 	symbol_df[1]['volume']=symbol_df[1]['volume']*100
-	table = tushare_mysql.tblNmae(each)
-	cursor.executemany(sql_insert.format(table), symbol_df[1])
-	Engine.commit()
+	df = symbol_df[1]
+
+	tushare_mysql.insertDatabase(each, df, Engine)
 
 tushare_mysql.togglemysql()

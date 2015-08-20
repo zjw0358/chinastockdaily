@@ -26,12 +26,16 @@ for pair in cursor:
 	date_str = str(date_int)
 	date_tuple = (int(date_str[0:4]), int(date_str[4:6]), int(date_str[6:]))
 	ipo = datetime.date(*date_tuple)
+	ipo = str(ipo)
 	
-	df = tushare_mysql.getHistKlineDf(symbol = symbol
-									   beginDate = str(ipo),
-									   endDate = '2012-8-15',
-									   retry_count = 5,
-									   pause = .01)
-	tushare_mysql.insertTableFromIPODate(symbol, df, mysqlEngine)
+	symbol_df = tushare_mysql.getHistKlineDf(symbol = symbol
+									   		beginDate = ipo,
+									   		endDate = '2012-8-15',
+									   		ktype = 'D'
+									   		retry_count = 5,
+									  	 	pause = .01)
+	df = symbol_df[1]
+	df['volume'] = df['volume'] * 100
+	tushare_mysql.insertDatabase(symbol, df, mysqlEngine)
 
 	
