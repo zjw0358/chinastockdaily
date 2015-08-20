@@ -16,6 +16,23 @@ wzc_at_local_mysql = {
     'host': '127.0.0.1',
 }
 
+
+class NumpyMySQLConverter(mysql.connector.conversion.MySQLConverter):
+    """ A mysql.connector Converter that handles Numpy types """
+
+    def _float32_to_mysql(self, value):
+        return float(value)
+
+    def _float64_to_mysql(self, value):
+        return float(value)
+
+    def _int32_to_mysql(self, value):
+        return int(value)
+
+    def _int64_to_mysql(self, value):
+        return int(value)
+
+
 def togglemysql(sqlEngine = None):
 	'''Login MySQL server 
 	return: MySQL Engine
@@ -26,6 +43,7 @@ def togglemysql(sqlEngine = None):
 		return None
 	else:
 		mysqlEngine = mysql.connector.connect(**wzc_at_local_mysql)
+		mysqlEngine.set_converter_class(NumpyMySQLConverter)
 		return mysqlEngine
 
 	# cursor = mysqlEngine.cursor()
